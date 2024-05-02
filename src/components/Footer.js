@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHouse, faLocationDot, faHeart } from '@fortawesome/free-solid-svg-icons';
+import { faLocationDot, faHeart } from '@fortawesome/free-solid-svg-icons';
 
 const Footer = () => {
     return (
@@ -48,7 +48,7 @@ const Footer = () => {
             <div className="icons">
                 <FontAwesomeIcon icon={faLocationDot} className="icon"/>
                 <FontAwesomeIcon icon={faHeart} className="icon"/>
-                <a href=""><div className="profile-pic"></div></a>
+                <div className="profile-pic"></div>
             </div>
         </footer>
         </>
