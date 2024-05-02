@@ -12,7 +12,7 @@ const Search = () => {
         setInput(inputValue);
 
         try {
-            const response = await axios.get(`http://trentinotrasportibackend.netlify.app/.netlify/functions/server/v1/fermate?stopName=${inputValue}`);
+            const response = await axios.get(`https://trentinotrasportibackend.netlify.app/.netlify/functions/server/v1/fermate?stopName=${inputValue}`);
             const data = response.data;
             console.log(data);
             setSuggestions(data.slice(0, 5));

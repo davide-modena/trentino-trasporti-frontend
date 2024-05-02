@@ -22,7 +22,7 @@ const Map = ({ latitude, longitude }) => {
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapRef.current);
 
         // Fai la richiesta axios a localhost:4000/fermate
-        axios.get('http://trentinotrasportibackend.netlify.app/.netlify/functions/server/v1/fermate')
+        axios.get('https://trentinotrasportibackend.netlify.app/.netlify/functions/server/v1/fermate')
             .then(response => {
                 setFermate(response.data);
             })
