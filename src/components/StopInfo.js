@@ -22,7 +22,7 @@ const StopInfo = ({ stop, onClose }) => {
             .catch(error => {
                 console.error('Error fetching fermate:', error);
             });
-    }, [])
+    }, [stop])
 
     const getRandomColor = (tripId) => {
         // const randomIndex = Math.floor(Math.random() * colors.length);
