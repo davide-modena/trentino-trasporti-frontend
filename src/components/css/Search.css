@@ -6,15 +6,38 @@
     z-index: 1;
 }
 
-.input-search input{
+.input-search .input{
     height: 40px;
     width: 90vw;
     max-width: 600px;
     border-radius: 45px;
-    border: none;
     box-shadow: 0 4px 7px 1px rgba(0, 0, 0, .25);
+    overflow: hidden;
+    background-color: white;
+    transition: .5s;
+}
+
+.input-search input{
+    border: none;
+    width: 100%;
+    height: 100%;
     padding: 15px;
     font-size: 16px;
+    border-radius: 45px;
+}
+
+.input-search .input.pianifica{
+    height: 110px;
+    border-radius: 15px;
+}
+
+.input-search .input.pianifica input{
+    height: 40px;
+    border-radius: 15px;
+}
+
+.input-search .input.pianifica input:focus{
+    outline: none;
 }
 
 .input-search .icon{
@@ -23,6 +46,56 @@
     right: 15px;
     font-size: 20px;
     color: rgba(0, 0, 0, .55);
+}
+
+.input-search .icon.arrival{
+    top: 50px;
+    right: 18px;
+}
+
+.input-search .icon.switch{
+    top: 30px;
+    right: 17px;
+    transform: rotate(90deg);
+    color: var(--blue);
+    font-size: 18px;
+}
+
+.input-search .icon.time{
+    left: 10px;
+    top: unset;
+    bottom: 9px;
+    font-size: 16px;
+}
+
+.input-search input.time{
+    position: absolute;
+    left: 0px;
+    top: unset;
+    bottom: 0px;
+    font-size: 14px;
+    width: 200px;
+}
+
+.input-search .time{
+    opacity: .7
+}
+
+.input-search button{
+    font-weight: 700;
+    color: white;
+    border: none;
+    background-color: var(--blue);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.input-search .pianifica button{
+    position: absolute;
+    right: 10px;
+    bottom: 5px;
 }
 
 .input-search ul{

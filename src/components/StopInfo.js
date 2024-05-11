@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBus, faHeart, faClock, faXmark } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import Loading from './Loading';
 
 const StopInfo = ({ stop, onClose }) => {
     const [trips, setTrips] = useState([]);
@@ -25,7 +26,6 @@ const StopInfo = ({ stop, onClose }) => {
     }, [stop])
 
     const getRandomColor = (tripId) => {
-        // const randomIndex = Math.floor(Math.random() * colors.length);
         const randomIndex = tripId % 4;
         return colors[randomIndex];
     };
@@ -41,7 +41,7 @@ const StopInfo = ({ stop, onClose }) => {
 
     return (
         <div className="stop-info-container">
-            <FontAwesomeIcon icon={faXmark} class="icon close-icon" onClick={handleCloseIcon}/>
+            <FontAwesomeIcon icon={faXmark} className="icon close-icon" onClick={handleCloseIcon}/>
             <div className="stop-info">
                 <h1>Dettagli Fermata</h1>
                 <div className="stop-container">
@@ -53,18 +53,20 @@ const StopInfo = ({ stop, onClose }) => {
                             {`${stop.name} | ${stop.id}`}
                         </div>
                         <div className="trips-preview">
-                            {trips.filter((trip, index) => index < 6 && trip.routeId).map((trip, index) => (
-                                index === 5 ? (
-                                    <div key={index}>
-                                        ...
-                                    </div>
-                                ) : (
-                                    <div key={index} style={{ "--trip-color": getRandomColor(trip.routeId) }}>
-                                        {(trip.routeId) ? trip.routeId : 'N/D'}
-                                        <div className="border"></div>
-                                    </div>
-                                )
-                            ))}
+                            {trips.length > 0 ? (
+                                trips.filter((trip, index) => index < 6 && trip.routeId).map((trip, index) => (
+                                    index === 5 ? (
+                                        <div key={index}>...</div>
+                                    ) : (
+                                        <div key={index} style={{ "--trip-color": getRandomColor(trip.routeId) }}>
+                                            {(trip.routeId) ? trip.routeId : 'N/D'}
+                                            <div className="border"></div>
+                                        </div>
+                                    )
+                                ))
+                            ) : (
+                                <div>Loading...</div>
+                            )}
                         </div>
                     </div>
                     <div className="favorite">
@@ -77,24 +79,28 @@ const StopInfo = ({ stop, onClose }) => {
                         <FontAwesomeIcon icon={faClock} className="icon"/>
                     </div>
                     <div className="trips">
-                        {trips.filter((trip, index) => trip.routeId).map((trip, index) => (
-                            <div className="trip" style={{ "--trip-color": getRandomColor(trip.routeId) }}>
-                                <div className="id">
-                                    <div className="centered">
-                                        {trip.routeId}
-                                        <div className="border"></div>
+                        {trips.length > 0 ? (
+                            trips.filter((trip, index) => trip.routeId).map((trip, index) => (
+                                <div className="trip" style={{ "--trip-color": getRandomColor(trip.routeId) }}>
+                                    <div className="id">
+                                        <div className="centered">
+                                            {trip.routeId}
+                                            <div className="border"></div>
+                                        </div>
+                                    </div>
+                                    <div className="info">
+                                        <div className="name">{trip.tripHeadsign}</div>
+                                        <div className="destination">Destinazione: {trip.tripHeadsign}</div>
+                                    </div>
+                                    <div className="times">
+                                        <div className="a">11:41</div>
+                                        <div className="p">11:43</div>
                                     </div>
                                 </div>
-                                <div className="info">
-                                    <div className="name">{trip.tripHeadsign}</div>
-                                    <div className="destination">Destinazione: {trip.tripHeadsign}</div>
-                                </div>
-                                <div className="times">
-                                    <div className="a">11:41</div>
-                                    <div className="p">11:43</div>
-                                </div>
-                            </div>
-                        ))}
+                            ))
+                        ) : (
+                            <Loading/>
+                        )}
                     </div>
                 </div>
             </div>

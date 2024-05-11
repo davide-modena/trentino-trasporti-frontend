@@ -79,3 +79,7 @@ h1{
 .selected{
   color: var(--blue)
 }
+
+.leaflet-control-container{
+  display: none;
+}
