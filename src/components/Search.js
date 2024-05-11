@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlass, faLocationDot, faArrowRightArrowLeft, faClock, faLocationCrosshairs } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlass, faLocationDot, faArrowRightArrowLeft, faLocationCrosshairs } from '@fortawesome/free-solid-svg-icons';
 import './css/Search.css';
 
 const Search = ({isPianifica}) => {

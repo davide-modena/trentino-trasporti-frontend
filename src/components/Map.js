@@ -5,8 +5,6 @@ import axios from 'axios';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import StopInfo from './StopInfo'; // Importa il componente StopInfo
-import * as maptilersdk from '@maptiler/sdk';
-import "@maptiler/sdk/dist/maptiler-sdk.css";
 import Loading from './Loading';
 
 import urbanBusUrl from './../images/bus-solid-u.svg';
