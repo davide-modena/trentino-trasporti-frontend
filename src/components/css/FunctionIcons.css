@@ -1,9 +1,9 @@
 .icons-container{
     position: fixed;
-    bottom: 70px;
-    right: 0;
+    bottom: 20px;
+    right: 10px;
     z-index: 1;
-    height: 150px;
+    /* height: 140px; */
     width: 70px;
     display: flex;
     flex-direction: column;

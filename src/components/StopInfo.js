@@ -6,12 +6,12 @@ import axios from 'axios';
 import Loading from './Loading';
 
 const StopInfo = ({ stop, onClose }) => {
-    const [trips, setTrips] = useState([]);
+    const [trips, setTrips] = useState(null);
     const colors = ['#A32525','#6325B2','#4CB18D','#2584A3'];
 
     useEffect(() => {
         //Fai la richiesta axios a localhost:4000/fermate
-        axios.get('https://trentinotrasportibackend.netlify.app/.netlify/functions/server/v1/viaggi_fermata?stopId=' + stop.id)
+        axios.get('https://trentinotrasportibackendold.netlify.app/.netlify/functions/server/v1/viaggi_fermata?stopId=' + stop.id)
             .then(response => {
                 if(Array.isArray(response.data[0])){
                     setTrips(response.data[0])
@@ -39,6 +39,16 @@ const StopInfo = ({ stop, onClose }) => {
         onClose();
     }
 
+    function formatTime(timestamp) {
+        // Crea un oggetto data dal timestamp
+        const date = new Date(timestamp);
+        // Ottieni le ore e i minuti dall'oggetto data
+        const hours = date.getHours().toString().padStart(2, '0'); // Aggiungi lo zero iniziale se necessario
+        const minutes = date.getMinutes().toString().padStart(2, '0'); // Aggiungi lo zero iniziale se necessario
+        // Restituisci l'ora formattata come "hh:mm"
+        return `${hours}:${minutes}`;
+    }
+
     return (
         <div className="stop-info-container">
             <FontAwesomeIcon icon={faXmark} className="icon close-icon" onClick={handleCloseIcon}/>
@@ -53,7 +63,8 @@ const StopInfo = ({ stop, onClose }) => {
                             {`${stop.name} | ${stop.id}`}
                         </div>
                         <div className="trips-preview">
-                            {trips.length > 0 ? (
+                        {trips ? (
+                            trips.length > 0 ? (
                                 trips.filter((trip, index) => index < 6 && trip.routeId).map((trip, index) => (
                                     index === 5 ? (
                                         <div key={index}>...</div>
@@ -65,8 +76,14 @@ const StopInfo = ({ stop, onClose }) => {
                                     )
                                 ))
                             ) : (
-                                <div>Loading...</div>
-                            )}
+                                <div style={{ "--trip-color": getRandomColor(0) }}>
+                                    {'N/D'}
+                                    <div className="border"></div>
+                                </div>
+                            )
+                        ) : (
+                            <div>Loading...</div>
+                        )}
                         </div>
                     </div>
                     <div className="favorite">
@@ -79,27 +96,31 @@ const StopInfo = ({ stop, onClose }) => {
                         <FontAwesomeIcon icon={faClock} className="icon"/>
                     </div>
                     <div className="trips">
-                        {trips.length > 0 ? (
-                            trips.filter((trip, index) => trip.routeId).map((trip, index) => (
-                                <div className="trip" style={{ "--trip-color": getRandomColor(trip.routeId) }}>
-                                    <div className="id">
-                                        <div className="centered">
-                                            {trip.routeId}
-                                            <div className="border"></div>
+                        {trips ? (
+                            trips.length > 0 ? (
+                                trips.filter((trip, index) => trip.routeId).map((trip, index) => (
+                                    <div className="trip" style={{ "--trip-color": getRandomColor(trip.routeId) }}>
+                                        <div className="id">
+                                            <div className="centered">
+                                                {trip.routeId}
+                                                <div className="border"></div>
+                                            </div>
+                                        </div>
+                                        <div className="info">
+                                            <div className="name">{trip.tripHeadsign}</div>
+                                            <div className="destination">Destinazione: {trip.tripHeadsign}</div>
+                                        </div>
+                                        <div className="times">
+                                            <div className="a">{formatTime(Date.now()+index*999999)}</div>
+                                            <div className="p">{formatTime(Date.now()+60000+index*999999)}</div>
                                         </div>
                                     </div>
-                                    <div className="info">
-                                        <div className="name">{trip.tripHeadsign}</div>
-                                        <div className="destination">Destinazione: {trip.tripHeadsign}</div>
-                                    </div>
-                                    <div className="times">
-                                        <div className="a">11:41</div>
-                                        <div className="p">11:43</div>
-                                    </div>
-                                </div>
-                            ))
+                                ))
+                            ) : (
+                                <div class="no-stop centered">Nessuna corsa disponibile :/</div>
+                            )
                         ) : (
-                            <Loading/>
+                            <Loading stopType={stop.type}/>
                         )}
                     </div>
                 </div>

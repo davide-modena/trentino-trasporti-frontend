@@ -5,7 +5,7 @@ import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'; // Assicurati
 import axios from 'axios';
 import Routing from 'leaflet-routing-machine';
 
-const Map2 = ({ latitude, longitude }) => {
+const RouteMap = ({ routePianifica }) => {
     const mapRef = useRef('');
     const [waypoints, setWaypoints] = useState([]);
 
@@ -19,10 +19,9 @@ const Map2 = ({ latitude, longitude }) => {
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapRef.current);
 
-            getWaypoints(4024,2584)
+            getWaypoints(routePianifica.start, routePianifica.arrival)
                 .then(waypoints => {
                     setWaypoints(waypoints);
-                    console.log(waypoints);
                 })
                 .catch(error => {
                     console.error(error);
@@ -35,37 +34,36 @@ const Map2 = ({ latitude, longitude }) => {
     }, []);
 
     useEffect(() => {
-        if (waypoints.length > 0) {
-            const routingControl = L.Routing.control({
-                waypoints: waypoints,
-                lineOptions: {
-                    styles: [{color: 'var(--blue)', opacity: 1, weight: 6}]
-                }
-            }).addTo(mapRef.current);
+        const defaultIcon = L.icon({
+            iconUrl: require('leaflet/dist/images/marker-icon.png'),
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            tooltipAnchor: [16, -28],
+            shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+            shadowSize: [41, 41],
+        });
 
-            const defaultIcon = L.icon({
-                iconUrl: require('leaflet/dist/images/marker-icon.png'),
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34],
-                tooltipAnchor: [16, -28],
-                shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
-                shadowSize: [41, 41],
-            });
+        // const routingControl = L.Routing.control({
+        //     waypoints: waypoints,
+        //     lineOptions: {
+        //         styles: [{color: 'var(--blue)', opacity: 1, weight: 6}]
+        //     }
+        // }).addTo(mapRef.current);
 
-            waypoints.forEach(waypoint => {
-                L.marker([waypoint[0],waypoint[1]], { icon: defaultIcon }).addTo(mapRef.current);
-            });
+        waypoints.forEach(waypoint => {
+            L.marker([waypoint[0],waypoint[1]], { icon: defaultIcon }).addTo(mapRef.current);
+        });
 
-            return () => {
-                mapRef.current.removeControl(routingControl);
-            };
-        }
+        return () => {
+            // mapRef.current.removeControl(routingControl);
+        };
     }, [waypoints]);
 
     async function getWaypoints(start,arrival) {
         try {
-          const response = await axios.get(`https://trentinotrasportibackend.netlify.app/.netlify/functions/server/v1/viaggi?start=${start}&arrival=${arrival}`);
+          const response = await axios.get(`https://trentinotrasportibackendold.netlify.app/.netlify/functions/server/v1/viaggi?start=${start}&arrival=${arrival}`);
+          console.log(response.data)
           let result = [];
           response.data[0].forEach(line => {
             if(line.stazioni){
@@ -88,4 +86,4 @@ const Map2 = ({ latitude, longitude }) => {
     );
 };
 
-export default Map2;
+export default RouteMap;

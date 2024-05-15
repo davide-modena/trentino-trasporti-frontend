@@ -10,13 +10,14 @@ import Loading from './Loading';
 import urbanBusUrl from './../images/bus-solid-u.svg';
 import extraurbanBusUrl from './../images/bus-solid-e.svg';
 
-const Map = ({ latitude, longitude }) => {
+const Map = ({ latitude, longitude, routePianifica, recenter, setRecenter }) => {
     const [fermate, setFermate] = useState([]);
     const [selectedStop, setSelectedStop] = useState(null);
     const [map, setMap] = useState(null);
+    const [routePoints, setRoutePoints] = ([]);
 
     useEffect(() => {
-        axios.get('https://trentinotrasportibackend.netlify.app/.netlify/functions/server/v1/fermate')
+        axios.get('https://trentinotrasportibackendold.netlify.app/.netlify/functions/server/v1/fermate')
             .then(response => {
                 setFermate(response.data);
             })
@@ -24,6 +25,13 @@ const Map = ({ latitude, longitude }) => {
                 console.error('Error fetching fermate:', error);
             });
     }, []);
+
+    useEffect(() => {
+        if (map && recenter) {
+            map.setView([latitude, longitude], map.getZoom());
+            setRecenter(false);
+        }
+    },[recenter])
 
     const urbanMarker = L.icon({
         iconUrl: urbanBusUrl,
@@ -42,12 +50,6 @@ const Map = ({ latitude, longitude }) => {
         tooltipAnchor: [16, -28],
         shadowSize: [41, 41]
     });
-
-    const recenterMap = () => {
-        if (map) {
-            map.setView([latitude, longitude], map.getZoom());
-        }
-    };
 
     return (
         <div>
@@ -72,9 +74,10 @@ const Map = ({ latitude, longitude }) => {
                     <Loading/>
                 )}
             </MapContainer>
+            
             {selectedStop && <StopInfo stop={selectedStop} onClose={() => setSelectedStop(null)} />}
         </div>
-    );
+    );    
 };
 
 export default Map;

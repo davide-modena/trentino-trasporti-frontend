@@ -195,3 +195,8 @@
     font-size: 11px;
     opacity: .6;
 }
+
+.trips-info .trips .no-stop {
+    height: 60vh;
+    font-size: 20px;
+}
