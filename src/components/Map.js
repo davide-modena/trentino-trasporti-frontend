@@ -10,14 +10,14 @@ import Loading from './Loading';
 import urbanBusUrl from './../images/bus-solid-u.svg';
 import extraurbanBusUrl from './../images/bus-solid-e.svg';
 
-const Map = ({ latitude, longitude, routePianifica, recenter, setRecenter }) => {
+const Map = ({ latitude, longitude, routePianifica, selectedStop, setSelectedStop }) => {
     const [fermate, setFermate] = useState([]);
-    const [selectedStop, setSelectedStop] = useState(null);
+    // const [selectedStop, setSelectedStop] = useState(null);
     const [map, setMap] = useState(null);
     const [routePoints, setRoutePoints] = ([]);
 
     useEffect(() => {
-        axios.get('https://trentinotrasportibackendold.netlify.app/.netlify/functions/server/v1/fermate')
+        axios.get('https://trentinotrasportibackend.netlify.app/.netlify/functions/server/v1/fermate')
             .then(response => {
                 setFermate(response.data);
             })
@@ -26,12 +26,12 @@ const Map = ({ latitude, longitude, routePianifica, recenter, setRecenter }) => 
             });
     }, []);
 
-    useEffect(() => {
-        if (map && recenter) {
-            map.setView([latitude, longitude], map.getZoom());
-            setRecenter(false);
-        }
-    },[recenter])
+    // useEffect(() => {
+    //     if (map) { 
+    //         map.setView([latitude, longitude], map.getZoom());
+    //         setRecenter(null);
+    //     }
+    // },[recenter])
 
     const urbanMarker = L.icon({
         iconUrl: urbanBusUrl,

@@ -11,7 +11,7 @@ const StopInfo = ({ stop, onClose }) => {
 
     useEffect(() => {
         //Fai la richiesta axios a localhost:4000/fermate
-        axios.get('https://trentinotrasportibackendold.netlify.app/.netlify/functions/server/v1/viaggi_fermata?stopId=' + stop.id)
+        axios.get('https://trentinotrasportibackend.netlify.app/.netlify/functions/server/v1/viaggi_fermata?stopId=' + stop.id)
             .then(response => {
                 if(Array.isArray(response.data[0])){
                     setTrips(response.data[0])
@@ -60,7 +60,7 @@ const StopInfo = ({ stop, onClose }) => {
                     </div>
                     <div className="details">
                         <div className="name">
-                            {`${stop.name} | ${stop.id}`}
+                            {`${stop.name}`}
                         </div>
                         <div className="trips-preview">
                         {trips ? (
@@ -93,7 +93,7 @@ const StopInfo = ({ stop, onClose }) => {
                 <div className="trips-info">
                     <div className="arriving">
                         <h2>In Arrivo</h2>
-                        <FontAwesomeIcon icon={faClock} className="icon"/>
+                        {/* <FontAwesomeIcon icon={faClock} className="icon"/> */}
                     </div>
                     <div className="trips">
                         {trips ? (
@@ -107,8 +107,8 @@ const StopInfo = ({ stop, onClose }) => {
                                             </div>
                                         </div>
                                         <div className="info">
-                                            <div className="name">{trip.tripHeadsign}</div>
-                                            <div className="destination">Destinazione: {trip.tripHeadsign}</div>
+                                            <div className="name">{trip.name}</div>
+                                            <div className="destination">Destinazione: {trip.end_arrival}</div>
                                         </div>
                                         <div className="times">
                                             <div className="a">{formatTime(Date.now()+index*999999)}</div>

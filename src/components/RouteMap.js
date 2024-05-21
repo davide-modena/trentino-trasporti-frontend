@@ -1,87 +1,119 @@
 import React, { useEffect, useState, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'; // Assicurati di importare il CSS di leaflet-routing-machine
+import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'; // Import the CSS of leaflet-routing-machine
 import axios from 'axios';
-import Routing from 'leaflet-routing-machine';
+import 'leaflet-routing-machine';
+
+import Loading from './Loading';
+
+// Fix for default icon issue with Webpack
+import icon from './../images/bus-solid-e.svg';
+
+let DefaultIcon = L.icon({
+    iconUrl: icon,
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+});
+
+L.Marker.prototype.options.icon = DefaultIcon;
 
 const RouteMap = ({ routePianifica }) => {
-    const mapRef = useRef('');
+    const mapRef = useRef(null);
     const [waypoints, setWaypoints] = useState([]);
 
     useEffect(() => {
-        if(!mapRef.current){
-            mapRef.current = L.map('map', {
-                center: [46, 11],
-                zoom: 14,
-                zoomControl: false
-            });
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapRef.current);
-
-            getWaypoints(routePianifica.start, routePianifica.arrival)
-                .then(waypoints => {
-                    setWaypoints(waypoints);
-                })
-                .catch(error => {
-                    console.error(error);
+        try {
+            if (!mapRef.current) {
+                mapRef.current = L.map('map', {
+                    center: [46, 11],
+                    zoom: 12,
+                    zoomControl: false
                 });
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapRef.current);                
+
+                getWaypoints(routePianifica.start, routePianifica.arrival)
+                    .then(waypoints => {
+                        setWaypoints(waypoints);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching waypoints:', error);
+                    });
+            }
+        } catch (error) {
+            console.error('Error initializing map:', error);
         }
 
         return () => {
-            // Cleanup
+            try {
+                // Cleanup
+                if (mapRef.current) {
+                    mapRef.current.off();
+                    mapRef.current.remove();
+                    mapRef.current = null;
+                }
+            } catch (error) {
+                console.warn('Ignoring error during map cleanup:', error);
+            }
         };
-    }, []);
+    }, [routePianifica]);
 
     useEffect(() => {
-        const defaultIcon = L.icon({
-            iconUrl: require('leaflet/dist/images/marker-icon.png'),
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-            tooltipAnchor: [16, -28],
-            shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
-            shadowSize: [41, 41],
-        });
+        try {
+            if (waypoints.length > 0 && mapRef.current) {
+                const routingControl = L.Routing.control({
+                    waypoints: waypoints.map(wp => L.latLng(wp[0], wp[1])),
+                    fitSelectedRoutes: true,
+                    lineOptions: {
+                        addWaypoints: false,
+                        styles: [{ color: 'var(--blue)', opacity: 1, weight: 6 }]
+                    },
+                    createMarker: function () { return null; }
+                }).addTo(mapRef.current);
 
-        // const routingControl = L.Routing.control({
-        //     waypoints: waypoints,
-        //     lineOptions: {
-        //         styles: [{color: 'var(--blue)', opacity: 1, weight: 6}]
-        //     }
-        // }).addTo(mapRef.current);
+                waypoints.forEach(waypoint => {
+                    L.marker([waypoint[0], waypoint[1]], { icon: DefaultIcon }).addTo(mapRef.current);
+                });
 
-        waypoints.forEach(waypoint => {
-            L.marker([waypoint[0],waypoint[1]], { icon: defaultIcon }).addTo(mapRef.current);
-        });
-
-        return () => {
-            // mapRef.current.removeControl(routingControl);
-        };
+                return () => {
+                    try {
+                        if (mapRef.current) {
+                            mapRef.current.removeControl(routingControl);
+                        }
+                    } catch (error) {
+                        console.warn('Ignoring removeLayer error during routing control cleanup:', error);
+                    }
+                };
+            }
+        } catch (error) {
+            console.error('Error setting up routing control:', error);
+        }
     }, [waypoints]);
 
-    async function getWaypoints(start,arrival) {
+    async function getWaypoints(start, arrival) {
         try {
-          const response = await axios.get(`https://trentinotrasportibackendold.netlify.app/.netlify/functions/server/v1/viaggi?start=${start}&arrival=${arrival}`);
-          console.log(response.data)
-          let result = [];
-          response.data[0].forEach(line => {
-            if(line.stazioni){
-                let coordinates = [line.stazioni.arrivo.lat,line.stazioni.arrivo.lon];
-                result.push(coordinates);
-                coordinates = [line.stazioni.partenza.lat,line.stazioni.partenza.lon];
-                result.push(coordinates);
-            }
-          });
-          return result;
+            const response = await axios.get(`https://trentinotrasportibackend.netlify.app/.netlify/functions/server/v1/viaggi?start=${start}&arrival=${arrival}`);
+            console.log(response.data);
+            let result = [];
+            response.data[0].forEach(line => {
+                if (line.stations) {
+                    let coordinates = [line.stations.arrival.lat, line.stations.arrival.lon];
+                    result.push(coordinates);
+                    coordinates = [line.stations.departure.lat, line.stations.departure.lon];
+                    result.push(coordinates);
+                }
+            });
+            return result;
         } catch (error) {
-          console.error(error);
+            console.error('Error fetching waypoints from API:', error);
+            return [];
         }
     }
 
     return (
         <div>
-            <div id="map"></div>
+            <div id="map" style={{ height: '100vh', width: '100%' }}></div>
         </div>
     );
 };

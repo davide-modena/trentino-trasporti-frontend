@@ -6,11 +6,15 @@ import Footer from './components/Footer';
 import FunctionIcons from './components/FunctionIcons';
 import Login from './components/Login';
 
+import TestRouting from './components/TestRouting';
+
 const App = () => {
     const [isPianifica, setIsPianifica] = useState(false);
     const [routePianifica, setRoutePianifica] = useState(null);
     const [location, setLocation] = useState(null);
-    const [recenter, setRecenter] = useState(false);
+    const [recenter, setRecenter] = useState(null);
+
+    const [selectedStop, setSelectedStop] = useState(null);
 
     useEffect(() => {
         if (navigator.geolocation) {
@@ -46,17 +50,16 @@ const App = () => {
 
 
     return (
-        // <div>
-        //     <Search isPianifica={isPianifica} setRoutePianifica={setRoutePianifica}/>
-        //     <FunctionIcons isPianifica={isPianifica} setIsPianifica={setIsPianifica} setRecenter={setRecenter}/>
-        //     {location && (!routePianifica ? (
-        //         <Map latitude={location.lat} longitude={location.lon} recenter={recenter} setRecenter={setRecenter}/>
-        //     ) : (
-        //         <RouteMap routePianifica={routePianifica}/>
-        //     ))}
-        //     {/* <Footer/> */}
-        // </div>
-        <Login/>
+        <div>
+            <Search isPianifica={isPianifica} setRoutePianifica={setRoutePianifica} setSelectedStop={setSelectedStop}/>
+            <FunctionIcons isPianifica={isPianifica} setIsPianifica={setIsPianifica} setRoutePianifica={setRoutePianifica} routePianifica={routePianifica}/>
+            {location && (!routePianifica ? (
+                <Map latitude={location.lat} longitude={location.lon} selectedStop={selectedStop} setSelectedStop={setSelectedStop}/>
+            ) : (
+                <RouteMap routePianifica={routePianifica}/>
+            ))}
+            {/* <Login/> */}
+        </div>
     );
 };
 
